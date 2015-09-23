@@ -15,7 +15,7 @@ Exploratory data analysis and diagramatic plots are located in the Appendix of t
 
 ##Data processing
 We begin by loading the mtcars dataset and converting some variables to factors.
-```{r}
+```{r, echo=FALSE, results="hide"}
 data(mtcars)
 mtcars$cyl <- factor(mtcars$cyl)
 mtcars$vs <- factor(mtcars$vs)
@@ -27,24 +27,24 @@ colnames(mtcars)[9]<-"TransType"
 ##Analysis
 ### Simple Linear Regression between mpg and transmission
 Is there a different between mpg achieved with manual vs automatic transmissions?
-The boxplot (fig 1) in the appendix clearly indicates a higher mean mpg figure when comparing automatic vs manual transmissions, on average about 7 more miles to the gallon. A t-test shows that the difference in means mpg is significant. (The p-value < 0.05).
-```{R}
+The boxplot in Figure 1 in the appendix clearly indicates a higher mean mpg figure when comparing automatic vs manual transmissions, on average about 7 more miles to the gallon. A t-test shows that the difference in means mpg is significant. (The p-value < 0.05).
+```{r, echo=FALSE}
 simple_fit<-lm(mpg ~ TransType,mtcars)
-simple_fit
+summary(simple_fit)
 t.test(mpg~TransType,mtcars)
 ```
-However we can also see that the adjust R-squared value of the simple linear regression model is 0.3385, meaning a different tranmission only explains 33.85% of the variance in mpg.
+However we can also see that the adjust R-squared value of the simple linear regression model is 0.3385, indicating a different tranmission only explains 33.85% of the variance in mpg.
 
 ### Multiple regression analysis
-From the pairs plot (fig 2), several other variables seem to have high correlation with mpg. To find the best model fit build an initial model including all the variables as predictors and perform a stepwise model selection to determine which are the predictors required for the best fit.
+From the pairs plot in Figure 2, several other variables seem to have high correlation with mpg. To find the best model fit build an initial model including all the variables as predictors and perform a stepwise model selection to determine which are the predictors required for the best fit.
 The R function step can do this quite easily, it chooses a model based on AIC. (https://en.wikipedia.org/wiki/Akaike_information_criterion)
-```{R}
+```{r, echo=FALSE, results="hide"}
 fullmodel <- lm(mpg ~ ., data = mtcars)
 bestmodel <- step(fullmodel, direction = "both")
 ```
 From the best model we see that in addition to transmission type, cyl, hp, and wt are all also important variables in predicting mpg. The adjusted R-squared value is .8401 which tells us that 84% of the variability is explained by this model.
 Comparing both the simple linear regression model and the best fit model, the p-value is very small, indicating that the two models are significantly different. The combination of weight, horsepower and transmission type explain 84% of the variability in mileage achieved per gallon.
-```{R}
+```{r, echo=FALSE}
 anova(simple_fit,bestmodel)
 ```
 
@@ -59,11 +59,11 @@ Outlier points:
 Leverage:
 
 ##Appendix
-```{R}
+```{r}
 library(ggplot2)
 ```
 ###Figure 1: Box plot of mpg by transmission type
-```{R}
+```{r}
 fig1<-ggplot(mtcars, aes(factor(TransType), mpg, fill=factor(TransType))) +
   geom_boxplot() +
   scale_colour_discrete(name = "Type") + 
@@ -80,7 +80,7 @@ fig2
 ```
 
 ###Figure 3: Plot of best fit model
-```{R}
+```{r}
 par(mfrow =c(2,2))
 plot(bestmodel)
 ```
